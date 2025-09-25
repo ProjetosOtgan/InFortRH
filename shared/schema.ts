@@ -1,101 +1,101 @@
-import { mysqlTable, int, varchar, text, timestamp, boolean } from "drizzle-orm/mysql-core"
+import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core"
 import { sql } from "drizzle-orm"
 import { relations } from "drizzle-orm"
 
 // Tabela de usuários
-export const users = mysqlTable("users", {
-  id: int("id").primaryKey().autoincrement(),
-  name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).unique().notNull(),
-  password: varchar("password", { length: 255 }),
-  role: varchar("role", { length: 20 }).notNull().default("FUNCIONARIO"),
-  needsPasswordSetup: boolean("needs_password_setup").default(true),
-  status: varchar("status", { length: 20 }).notNull().default("ATIVO"),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`),
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  email: text("email").unique().notNull(),
+  password: text("password"),
+  role: text("role").notNull().default("FUNCIONARIO"),
+  needsPasswordSetup: integer("needs_password_setup", { mode: "boolean" }).default(true),
+  status: text("status").notNull().default("ATIVO"),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 })
 
 // Tabela de contracheques
-export const payslips = mysqlTable("payslips", {
-  id: int("id").primaryKey().autoincrement(),
-  userId: int("user_id")
+export const payslips = sqliteTable("payslips", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  month: int("month").notNull(),
-  year: int("year").notNull(),
-  fileUrl: varchar("file_url", { length: 500 }).notNull(),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+  month: integer("month").notNull(),
+  year: integer("year").notNull(),
+  fileUrl: text("file_url").notNull(),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 })
 
 // Tabela de solicitações de folga
-export const timeOffRequests = mysqlTable("time_off_requests", {
-  id: int("id").primaryKey().autoincrement(),
-  userId: int("user_id")
+export const timeOffRequests = sqliteTable("time_off_requests", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  type: varchar("type", { length: 50 }).notNull(),
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date").notNull(),
+  type: text("type").notNull(),
+  startDate: text("start_date").notNull(),
+  endDate: text("end_date").notNull(),
   justification: text("justification"),
-  medicalCertificateUrl: varchar("medical_certificate_url", { length: 500 }),
-  status: varchar("status", { length: 20 }).notNull().default("PENDENTE"),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`),
+  medicalCertificateUrl: text("medical_certificate_url"),
+  status: text("status").notNull().default("PENDENTE"),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 })
 
 // Tabela de solicitações de reunião
-export const meetingRequests = mysqlTable("meeting_requests", {
-  id: int("id").primaryKey().autoincrement(),
-  userId: int("user_id")
+export const meetingRequests = sqliteTable("meeting_requests", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  topic: varchar("topic", { length: 500 }).notNull(),
-  preferredDateTime: timestamp("preferred_date_time").notNull(),
-  status: varchar("status", { length: 20 }).notNull().default("PENDENTE"),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`),
+  topic: text("topic").notNull(),
+  preferredDateTime: text("preferred_date_time").notNull(),
+  status: text("status").notNull().default("PENDENTE"),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 })
 
 // Tabela de informativos/anúncios
-export const announcements = mysqlTable("announcements", {
-  id: int("id").primaryKey().autoincrement(),
-  title: varchar("title", { length: 255 }).notNull(),
+export const announcements = sqliteTable("announcements", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
   content: text("content"),
-  imageUrl: varchar("image_url", { length: 500 }),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+  imageUrl: text("image_url"),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 })
 
 // Tabela de eventos
-export const events = mysqlTable("events", {
-  id: int("id").primaryKey().autoincrement(),
-  title: varchar("title", { length: 255 }).notNull(),
+export const events = sqliteTable("events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
   description: text("description").notNull(),
-  dateTime: timestamp("date_time").notNull(),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+  dateTime: text("date_time").notNull(),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 })
 
 // Tabela de participantes de eventos (relação many-to-many)
-export const eventParticipants = mysqlTable("event_participants", {
-  id: int("id").primaryKey().autoincrement(),
-  eventId: int("event_id")
+export const eventParticipants = sqliteTable("event_participants", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  eventId: integer("event_id")
     .references(() => events.id, { onDelete: "cascade" })
     .notNull(),
-  userId: int("user_id")
+  userId: integer("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 })
 
 // Tabela de notificações
-export const notifications = mysqlTable("notifications", {
-  id: int("id").primaryKey().autoincrement(),
-  userId: int("user_id")
+export const notifications = sqliteTable("notifications", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   message: text("message").notNull(),
-  link: varchar("link", { length: 255 }),
-  isRead: boolean("is_read").default(false),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+  link: text("link"),
+  isRead: integer("is_read", { mode: "boolean" }).default(false),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 })
 
 // Definir relações

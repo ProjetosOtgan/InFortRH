@@ -1,28 +1,12 @@
-import mysql from "mysql2/promise"
-import { drizzle } from "drizzle-orm/mysql2"
+import Database from "better-sqlite3"
+import { drizzle } from "drizzle-orm/better-sqlite3"
 import * as schema from "../shared/schema"
 
-const connection = mysql.createPool({
-  host: process.env.MYSQL_HOST || "localhost",
-  user: process.env.MYSQL_USER || "root",
-  password: process.env.MYSQL_PASSWORD || "",
-  database: process.env.MYSQL_DATABASE || "infort_rh",
-  port: Number.parseInt(process.env.MYSQL_PORT || "3306"),
-  connectionLimit: 10,
-  acquireTimeout: 60000,
-  timeout: 60000,
-  charset: "utf8mb4",
-  timezone: "+00:00",
-})
+const sqlite = new Database("./database.db")
+export const db = drizzle(sqlite, { schema })
 
-export const db = drizzle(connection, { schema, mode: "default" })
-
-connection
-  .getConnection()
-  .then((conn) => {
-    console.log("✅ Conexão MySQL estabelecida com sucesso")
-    conn.release()
-  })
-  .catch((err) => {
-    console.error("❌ Erro na conexão MySQL:", err.message)
-  })
+try {
+  console.log("✅ Conexão SQLite estabelecida com sucesso")
+} catch (err: any) {
+  console.error("❌ Erro na conexão SQLite:", err.message)
+}
