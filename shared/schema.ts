@@ -1,10 +1,10 @@
-import { pgTable, serial, varchar, text, timestamp, boolean, integer } from "drizzle-orm/pg-core"
+import { mysqlTable, int, varchar, text, timestamp, boolean } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 import { relations } from "drizzle-orm"
 
 // Tabela de usuários
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
+export const users = mysqlTable("users", {
+  id: int("id").primaryKey().autoincrement(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).unique().notNull(),
   password: varchar("password", { length: 255 }),
@@ -16,21 +16,21 @@ export const users = pgTable("users", {
 })
 
 // Tabela de contracheques
-export const payslips = pgTable("payslips", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id")
+export const payslips = mysqlTable("payslips", {
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  month: integer("month").notNull(),
-  year: integer("year").notNull(),
+  month: int("month").notNull(),
+  year: int("year").notNull(),
   fileUrl: varchar("file_url", { length: 500 }).notNull(),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
 })
 
 // Tabela de solicitações de folga
 export const timeOffRequests = mysqlTable("time_off_requests", {
-  id: serial("id").primaryKey(),
-  userId: serial("user_id")
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   type: varchar("type", { length: 50 }).notNull(),
@@ -45,8 +45,8 @@ export const timeOffRequests = mysqlTable("time_off_requests", {
 
 // Tabela de solicitações de reunião
 export const meetingRequests = mysqlTable("meeting_requests", {
-  id: serial("id").primaryKey(),
-  userId: serial("user_id")
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   topic: varchar("topic", { length: 500 }).notNull(),
@@ -58,7 +58,7 @@ export const meetingRequests = mysqlTable("meeting_requests", {
 
 // Tabela de informativos/anúncios
 export const announcements = mysqlTable("announcements", {
-  id: serial("id").primaryKey(),
+  id: int("id").primaryKey().autoincrement(),
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content"),
   imageUrl: varchar("image_url", { length: 500 }),
@@ -67,7 +67,7 @@ export const announcements = mysqlTable("announcements", {
 
 // Tabela de eventos
 export const events = mysqlTable("events", {
-  id: serial("id").primaryKey(),
+  id: int("id").primaryKey().autoincrement(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
   dateTime: timestamp("date_time").notNull(),
@@ -76,11 +76,11 @@ export const events = mysqlTable("events", {
 
 // Tabela de participantes de eventos (relação many-to-many)
 export const eventParticipants = mysqlTable("event_participants", {
-  id: serial("id").primaryKey(),
+  id: int("id").primaryKey().autoincrement(),
   eventId: int("event_id")
     .references(() => events.id, { onDelete: "cascade" })
     .notNull(),
-  userId: serial("user_id")
+  userId: int("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
@@ -88,8 +88,8 @@ export const eventParticipants = mysqlTable("event_participants", {
 
 // Tabela de notificações
 export const notifications = mysqlTable("notifications", {
-  id: serial("id").primaryKey(),
-  userId: serial("user_id")
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   message: text("message").notNull(),

@@ -1,20 +1,21 @@
-import { Pool } from "pg"
-import { drizzle } from "drizzle-orm/node-postgres"
+import mysql from "mysql2/promise"
+import { drizzle } from "drizzle-orm/mysql2"
 import * as schema from "../shared/schema"
 
-const connection = new Pool({
-  host: process.env.DATABASE_HOST || "localhost",
-  user: process.env.PGUSER || "postgres",
-  password: process.env.PGPASSWORD || "postgres",
-  database: process.env.PGDATABASE || "postgres",
-  port: Number.parseInt(process.env.PGPORT || "5432"),
-  max: 10,
-  connectionTimeoutMillis: 60000,
-  idleTimeoutMillis: 60000,
-  ssl: false,
+const connection = mysql.createPool({
+  host: process.env.MYSQL_HOST || "localhost",
+  user: process.env.MYSQL_USER || "root",
+  password: process.env.MYSQL_PASSWORD || "",
+  database: process.env.MYSQL_DATABASE || "infort_rh",
+  port: Number.parseInt(process.env.MYSQL_PORT || "3306"),
+  connectionLimit: 10,
+  acquireTimeout: 60000,
+  timeout: 60000,
+  charset: "utf8mb4",
+  timezone: "+00:00",
 })
 
-export const db = drizzle(connection, { schema })
+export const db = drizzle(connection, { schema, mode: "default" })
 
 connection
   .getConnection()
